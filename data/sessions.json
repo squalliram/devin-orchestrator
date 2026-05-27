@@ -1,0 +1,54 @@
+{
+  "issue-squalliram_superset-1": {
+    "session_id": "issue-squalliram_superset-1",
+    "issue_number": 1,
+    "issue_title": "[Security] Upgrade Pillow to patch CVE-2024-28219",
+    "issue_url": "https://github.com/squalliram/superset/issues/1",
+    "repo": "squalliram/superset",
+    "status": "completed",
+    "started_at": "2025-05-25T14:20:00.000Z",
+    "finished_at": "2025-05-25T14:44:00.000Z",
+    "pr_url": "https://github.com/squalliram/superset/pull/17",
+    "devin_url": "https://app.devin.ai/review/squalliram/superset/pull/17",
+    "updated_at": "2025-05-25T14:44:00.000Z"
+  },
+  "issue-squalliram_superset-2": {
+    "session_id": "issue-squalliram_superset-2",
+    "issue_number": 2,
+    "issue_title": "[Deps] Upgrade deprecated setup.py usage to pyproject.toml standard",
+    "issue_url": "https://github.com/squalliram/superset/issues/2",
+    "repo": "squalliram/superset",
+    "status": "completed",
+    "started_at": "2025-05-25T14:20:00.000Z",
+    "finished_at": "2025-05-25T14:44:00.000Z",
+    "pr_url": "https://github.com/squalliram/superset/pull/18",
+    "devin_url": "https://app.devin.ai/review/squalliram/superset/pull/18",
+    "updated_at": "2025-05-25T14:44:00.000Z"
+  },
+  "issue-squalliram_superset-3": {
+    "session_id": "issue-squalliram_superset-3",
+    "issue_number": 3,
+    "issue_title": "[Quality] Add missing return type annotations to superset/utils/core.py",
+    "issue_url": "https://github.com/squalliram/superset/issues/3",
+    "repo": "squalliram/superset",
+    "status": "completed",
+    "started_at": "2025-05-25T14:20:00.000Z",
+    "finished_at": "2025-05-25T14:44:00.000Z",
+    "pr_url": "https://github.com/squalliram/superset/pull/19",
+    "devin_url": "https://app.devin.ai/review/squalliram/superset/pull/19",
+    "updated_at": "2025-05-25T14:44:00.000Z"
+  },
+  "issue-squalliram_superset-4": {
+    "session_id": "issue-squalliram_superset-4",
+    "issue_number": 4,
+    "issue_title": "[Lint] Remove unused imports flagged by flake8 in superset/models/",
+    "issue_url": "https://github.com/squalliram/superset/issues/4",
+    "repo": "squalliram/superset",
+    "status": "completed",
+    "started_at": "2025-05-25T14:20:00.000Z",
+    "finished_at": "2025-05-25T14:44:00.000Z",
+    "pr_url": "https://github.com/squalliram/superset/pull/16",
+    "devin_url": "https://app.devin.ai/review/squalliram/superset/pull/16",
+    "updated_at": "2025-05-25T14:44:00.000Z"
+  }
+}

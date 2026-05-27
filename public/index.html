@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Devin Orchestrator</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d0d0d;color:#e8e8e8;font-family:-apple-system,sans-serif;font-size:14px}header{background:#161616;border-bottom:1px solid #2a2a2a;padding:16px 32px;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:600;display:flex;align-items:center;gap:8px}.dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:p 2s infinite}@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}main{padding:28px 32px;max-width:1100px;margin:0 auto}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}.card{background:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:16px}.card .l{color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}.card .v{font-size:28px;font-weight:700}.r .v{color:#f59e0b}.c .v{color:#22c55e}.f .v{color:#ef4444}.p .v{color:#3b82f6}.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}h2{font-size:15px;font-weight:600}.btn{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:500}table{width:100%;border-collapse:collapse;background:#161616;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden}thead{background:#1e1e1e}th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;color:#888;border-bottom:1px solid #2a2a2a}td{padding:12px 16px;border-bottom:1px solid #2a2a2a;vertical-align:middle}tr:last-child td{border-bottom:none}.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase}.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}.running{background:rgba(245,158,11,.12);color:#f59e0b}.completed{background:rgba(34,197,94,.12);color:#22c55e}.failed,.error,.timeout{background:rgba(239,68,68,.12);color:#ef4444}a{color:#3b82f6;text-decoration:none;font-size:12px}a:hover{text-decoration:underline}.mono{font-family:monospace;font-size:11px;color:#888}.empty{text-align:center;padding:60px;color:#888}input,textarea{width:100%;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;padding:8px 12px;color:#e8e8e8;font-size:13px;font-family:inherit}label{display:block;font-size:12px;color:#888;margin:12px 0 4px}.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}.overlay.on{display:flex}.modal{background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:24px;width:480px;max-width:90vw}</style>
+</head><body>
+<header><div class="logo"><span class="dot"></span>Devin Orchestrator</div><span style="color:#888;font-size:12px" id="ts">—</span></header>
+<main>
+  <div class="grid">
+    <div class="card"><div class="l">Total</div><div class="v" id="s0">—</div></div>
+    <div class="card r"><div class="l">Running</div><div class="v" id="s1">—</div></div>
+    <div class="card c"><div class="l">Completed</div><div class="v" id="s2">—</div></div>
+    <div class="card f"><div class="l">Failed</div><div class="v" id="s3">—</div></div>
+    <div class="card p"><div class="l">PRs opened</div><div class="v" id="s4">—</div></div>
+  </div>
+  <div class="row"><h2>Sessions</h2><button class="btn" onclick="document.getElementById('ov').classList.add('on')">+ Manual trigger</button></div>
+  <table><thead><tr><th>Issue</th><th>Repo</th><th>Status</th><th>Pull Request</th><th>Duration</th><th>Session</th></tr></thead>
+  <tbody id="tb"></tbody></table>
+</main>
+
+<div class="overlay" id="ov" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal">
+    <h3 style="margin-bottom:16px">Manual trigger</h3>
+    <label>Issue number *</label><input id="mn" type="number" placeholder="1">
+    <label>Issue title *</label><input id="mt" placeholder="[Security] Upgrade Pillow...">
+    <label>Issue body</label><textarea id="mb" style="min-height:70px;resize:vertical" placeholder="Optional description"></textarea>
+    <label>Repo (owner/name)</label><input id="mr" placeholder="squalliram/superset">
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+      <button onclick="document.getElementById('ov').classList.remove('on')" style="background:transparent;border:1px solid #2a2a2a;color:#888;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer">Cancel</button>
+      <button onclick="go()" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer">Trigger Devin</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const e=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+async function load(){
+  try{
+    const [st,se]=await Promise.all([fetch('/api/stats').then(r=>r.json()),fetch('/api/sessions').then(r=>r.json())]);
+    ['s0','s1','s2','s3','s4'].forEach((id,i)=>document.getElementById(id).textContent=[st.total,st.running,st.completed,st.failed,st.with_pr][i]);
+    const tb=document.getElementById('tb');
+    if(!se.length){tb.innerHTML='<tr><td colspan="6"><div class="empty">No sessions yet — label an issue <strong>devin-autofix</strong> to start.</div></td></tr>';return;}
+    tb.innerHTML=se.map(s=>`<tr>
+      <td><div style="font-weight:500;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${e(s.issue_title)}</div><a href="${e(s.issue_url)}" target="_blank">#${s.issue_number}</a></td>
+      <td><span class="mono">${e(s.repo)}</span></td>
+      <td><span class="badge ${e(s.status)}">${e(s.status)}</span></td>
+      <td>${s.pr_url?`<a href="${e(s.pr_url)}" target="_blank">View PR →</a>`:'<span style="color:#888">—</span>'}</td>
+      <td style="color:#888;font-size:12px">${e(s.duration||'—')}</td>
+      <td>${s.devin_url?`<a href="${e(s.devin_url)}" target="_blank">Devin ↗</a>`:'—'}</td>
+    </tr>`).join('');
+    document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
+  }catch(err){console.error(err);}
+}
+async function go(){
+  const num=document.getElementById('mn').value,title=document.getElementById('mt').value;
+  if(!num||!title){alert('Issue number and title are required');return;}
+  const res=await fetch('/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({issue_number:+num,issue_title:title,issue_body:document.getElementById('mb').value,repo:document.getElementById('mr').value})});
+  if(res.ok){document.getElementById('ov').classList.remove('on');setTimeout(load,1500);}
+  else alert('Error — check console');
+}
+load();setInterval(load,10000);
+</script></body></html>
